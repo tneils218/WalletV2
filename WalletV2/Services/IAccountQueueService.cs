@@ -1,4 +1,5 @@
-﻿using WalletV2.Services.DTOs;
+﻿using WalletV2.Models;
+using WalletV2.Services.DTOs;
 
 namespace WalletV2.Services;
 

@@ -16,8 +16,5 @@
     </ItemGroup>
 
 
-    <ItemGroup>
-      <Folder Include="Controllers\Request\" />
-    </ItemGroup>
 
 </Project>

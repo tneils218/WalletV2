@@ -19,6 +19,7 @@ public class AccountQueueHandler : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             var data = await _queueService.Dequeue();
+            
         }
     }
 }
