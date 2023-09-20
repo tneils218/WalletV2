@@ -1,6 +1,10 @@
-﻿namespace WalletV2.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class AccountController
+namespace WalletV2.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AccountController : ControllerBase
 {
     
 }
