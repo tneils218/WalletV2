@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WalletV2.Models;
 
 namespace WalletV2.Controllers;
 
@@ -6,5 +7,5 @@ namespace WalletV2.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
-    
+
 }
