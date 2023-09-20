@@ -7,4 +7,6 @@ public interface IAccountService
 {
     Task<List<Account>> GetAccounts();
     Task<Account> CreateAccount(AccountDto account);
+
+    Task<Account> ActiveStatus(int id);
 }

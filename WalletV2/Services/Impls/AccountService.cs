@@ -35,4 +35,35 @@ public class AccountService: IAccountService
             return account;
         }
     }
+
+
+    public async Task<Account> ActiveStatus(int id)
+    {
+        using (var dbContext = dbContextContextFactory.CreateDbContext())
+        {
+            var account = await dbContext.AccountDb.FindAsync(id);
+
+            if (account != null)
+            {
+                // Check if the account is already active
+                if (account.Status)
+                {
+                    throw new InvalidOperationException("Account is already active.");
+                }
+
+                // Activate the account
+                account.Active();
+
+                // Update the activated timestamp
+                account.ActivatedAt = DateTime.Now;
+
+                await dbContext.SaveChangesAsync();
+
+                return account;
+            }
+
+            throw new InvalidOperationException("Account not found");
+        }
+    }
+
 }

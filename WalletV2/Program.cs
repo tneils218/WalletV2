@@ -7,11 +7,8 @@ using WalletV2.Services.Impls;
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
-
 services.AddControllers();
-
 services.AddEndpointsApiExplorer();
-
 services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("MySql")));
@@ -28,8 +25,9 @@ services.AddSingleton<IWalletQueueService>(sp =>
 });
 services.AddSingleton<IWalletService, WalletService>();
 services.AddSingleton<IAccountService, AccountService>();
-var app = builder.Build();
 
+
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -37,9 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
+app.UseFileServer();
 
 app.MapControllers();
 

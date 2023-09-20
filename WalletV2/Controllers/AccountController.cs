@@ -39,8 +39,24 @@ public class AccountController : ControllerBase
         try
         {
             var accountDto = AccountDto.Create(request.UserName, request.FullName, request.Email, request.Dob, request.AccountTypeId);
-            var product = await _accountService.CreateAccount(accountDto);
-            return CreatedAtAction(nameof(CreateAccount), new { }, product);
+            var account = await _accountService.CreateAccount(accountDto);
+            return CreatedAtAction(nameof(CreateAccount), new { }, account);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+
+        }
+
+    }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> ActiveStatus(int id)
+    {
+        if (!ModelState.IsValid) return ValidationProblem(ModelState);
+        try
+        {
+            var accounts = await _accountService.ActiveStatus(id);
+            return Ok(accounts);
         }
         catch (Exception ex)
         {
