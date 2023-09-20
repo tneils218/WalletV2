@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using WalletV2.BackgroundTasks;
 using WalletV2.DB;
+using WalletV2.Services;
+using WalletV2.Services.Impls;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +15,19 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("MySql")));
-
+services.AddSingleton<IDbContextFactory<AppDbContext>, AppDbContextFactory>();
+services.AddHostedService<WalletQueueHandler>();
+services.AddHostedService<AccountQueueHandler>();
+services.AddSingleton<IAccountQueueService>(sp =>
+{
+    return new InMemoryAccountQueueService(128);
+});
+services.AddSingleton<IWalletQueueService>(sp =>
+{
+    return new InMemoryWalletQueueService(128);
+});
+services.AddSingleton<IWalletService, WalletService>();
+services.AddSingleton<IAccountService, AccountService>();
 var app = builder.Build();
 
 
