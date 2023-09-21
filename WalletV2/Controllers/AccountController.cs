@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WalletV2.Controllers.Request;
-using WalletV2.Models;
 using WalletV2.Services;
 using WalletV2.Services.DTOs;
 
@@ -49,7 +48,7 @@ public class AccountController : ControllerBase
         }
 
     }
-    [HttpPut("{id}")]
+    [HttpPut("{id}/status")]
     public async Task<IActionResult> ActiveStatus(int id)
     {
         if (!ModelState.IsValid) return ValidationProblem(ModelState);

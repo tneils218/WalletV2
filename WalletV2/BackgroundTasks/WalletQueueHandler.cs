@@ -16,24 +16,32 @@ public class WalletQueueHandler : BackgroundService
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-            var data = await _queueService.Dequeue();
-            switch (data.ActionId)
+            while (!stoppingToken.IsCancellationRequested)
             {
-                case 1:
-                case 4:
-                    
-                    break;
+                var data = await _queueService.Dequeue();
+                switch (data.ActionId)
+                {
+                    case 1:
+                    case 4:
+                        await _walletService.UpdateWallet(data.WalletId, data.Amount, data.ActionId);
+                        break;
 
-                case 3:
-                    break;
-                default:
-                    break;
-                    
+                    case 3:
+                        // Handle case 3 logic
+                        break;
+
+                    default:
+                        await _walletService.TransferWallet(data.SourceId, data.WalletId, data.Amount, data.DestinationId, data.DestinationWalletId, data.ActionId);
+                        break;
+                }
             }
-
         }
-
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
+
 }

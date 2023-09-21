@@ -15,14 +15,8 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(builder.
 services.AddSingleton<IDbContextFactory<AppDbContext>, AppDbContextFactory>();
 services.AddHostedService<WalletQueueHandler>();
 services.AddHostedService<AccountQueueHandler>();
-services.AddSingleton<IAccountQueueService>(sp =>
-{
-    return new InMemoryAccountQueueService(128);
-});
-services.AddSingleton<IWalletQueueService>(sp =>
-{
-    return new InMemoryWalletQueueService(128);
-});
+services.AddSingleton<IAccountQueueService>(sp => new InMemoryAccountQueueService(128));
+services.AddSingleton<IWalletQueueService>(sp => new InMemoryWalletQueueService(128));
 services.AddSingleton<IWalletService, WalletService>();
 services.AddSingleton<IAccountService, AccountService>();
 

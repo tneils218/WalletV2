@@ -20,10 +20,10 @@ namespace WalletV2.Controllers;
 
         }
         [HttpGet]
-        public async Task<IActionResult> getAllWallet([FromQuery] string? id = "")
+        public async Task<IActionResult> GetAllWallet([FromQuery] string? id = "")
         {
-            var wallelts = await _walletService.GetAllWallet(id ?? "");
-            return Ok(wallelts);
+            var wallets = await _walletService.GetAllWallet(id ?? "");
+            return Ok(wallets);
         }
 
         [HttpPost]
@@ -62,7 +62,7 @@ namespace WalletV2.Controllers;
         }
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddMoney([FromBody] WalletAddOrWithdrawMoneyRequest request)
+        public async Task<IActionResult> AddMoney([FromBody] WalletAddMoneyRequest request)
         {
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);
@@ -80,7 +80,7 @@ namespace WalletV2.Controllers;
         }
         [HttpPost]
         [Route("withdraw")]
-        public async Task<IActionResult> WithdrawMoney([FromBody] WalletAddOrWithdrawMoneyRequest request)
+        public async Task<IActionResult> WithdrawMoney([FromBody] WalletWithdrawMoneyRequest request)
         {
             if (!ModelState.IsValid)
                 return ValidationProblem(ModelState);

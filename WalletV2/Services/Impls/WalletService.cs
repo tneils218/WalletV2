@@ -6,18 +6,18 @@ using WalletV2.Services.DTOs;
 namespace WalletV2.Services.Impls;
  public class WalletService : IWalletService
     {
-        private readonly IDbContextFactory<AppDbContext> dbContextContextFactory;
+        private readonly IDbContextFactory<AppDbContext> _dbContextContextFactory;
         private readonly ILogger<WalletService> _logger;
 
         public WalletService(IDbContextFactory<AppDbContext> dbContextFactory, ILogger<WalletService> logger)
         {
-            dbContextContextFactory = dbContextFactory;
+            _dbContextContextFactory = dbContextFactory;
             _logger = logger;
 
         }
         public async Task<Wallet> CreateWallet(WalletDto walletDto)
         {
-            using (var dbContext = dbContextContextFactory.CreateDbContext())
+            using (var dbContext = _dbContextContextFactory.CreateDbContext())
             {
 
                 var wallet = new Wallet(walletDto.AccountId);
@@ -30,7 +30,7 @@ namespace WalletV2.Services.Impls;
 
         public async Task<List<Wallet>> GetAllWallet(string id)
         {
-            using (var dbContext = dbContextContextFactory.CreateDbContext())
+            using (var dbContext = _dbContextContextFactory.CreateDbContext())
             {
                 IQueryable<Wallet> query = dbContext.WalletDb.Include(o => o.Account); ;
                 if (!string.IsNullOrEmpty(id))
@@ -44,7 +44,7 @@ namespace WalletV2.Services.Impls;
         }
         public async Task<string> TransferWallet(int sourceId, int walletId, decimal amount, int destinationId, int destinationWalletId, int actionTypeId)
         {
-            using (var dbContext = dbContextContextFactory.CreateDbContext())
+            using (var dbContext = _dbContextContextFactory.CreateDbContext())
             {
                 if (walletId == destinationWalletId && sourceId == destinationId)
                 {
@@ -63,9 +63,9 @@ namespace WalletV2.Services.Impls;
                 {
                     throw new ArgumentException("Invalid sender or receiver wallet ID.");
                 }
-
+                
                 var transferFee = await dbContext.ActionDb
-                    .FirstOrDefaultAsync(o => o.AccountTypeId == sender.Account.AccountTypeId && o.ActionTypeId == actionTypeId);
+                    .FirstOrDefaultAsync(o => o.AccountTypeId == sender!.Account!.AccountTypeId && o.ActionTypeId == actionTypeId);
 
                 if (transferFee == null)
                 {
@@ -84,7 +84,7 @@ namespace WalletV2.Services.Impls;
                     sender.Amount -= amount + transferFee.Fee;
                     receiver.Amount += amount;
 
-                    var walletTransferHistory = WalletHistory.CreateForSender(sender.Id, receiver.Id, transferFee.Fee, sender.Account.AccountTypeId, actionTypeId, amount);
+                    var walletTransferHistory = WalletHistory.CreateForSender(sender.Id, receiver.Id, transferFee.Fee, sender!.Account!.AccountTypeId, actionTypeId, amount);
 
                     dbContext.WalletHistoryDb.Add(walletTransferHistory);
 
@@ -107,7 +107,7 @@ namespace WalletV2.Services.Impls;
         public async Task<Wallet> UpdateWallet(int walletId, decimal amount, int actionTypeId)
         {
 
-            using (var dbContext = dbContextContextFactory.CreateDbContext())
+            using (var dbContext = _dbContextContextFactory.CreateDbContext())
             {
                 try
                 {
@@ -121,7 +121,10 @@ namespace WalletV2.Services.Impls;
                                 wallet.Amount += amount;
                                 break;
                             default:
-                                wallet.Amount -= amount;
+                                if (wallet.Amount > 0 && wallet.Amount >= amount)
+                                {
+                                    wallet.Amount -= amount;
+                                }
                                 break;
                         }
 
