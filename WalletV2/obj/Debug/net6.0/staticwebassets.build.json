@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "2gdGJmHMj/70Pw7FPwpRluwIinIc+dP9LA+XCWCsmuA=",
+  "Source": "WalletV2",
+  "BasePath": "_content/WalletV2",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
