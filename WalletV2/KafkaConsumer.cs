@@ -16,9 +16,9 @@ public class KafkaConsumer<TKey, TValue> : IDisposable
         _consumer.Dispose();
     }
 
-    public void Consume(Action<ConsumeResult<TKey, TValue>> callback, string topic, int partition = -1, long offset = -1, CancellationToken cancellationToken = default)
+    public void Consume(Action<ConsumeResult<TKey, TValue>> callback, string topic, CancellationToken cancellationToken = default)
     {
-        SetSubscribeOrAssign(topic, partition, offset);
+        SetSubscribeOrAssign(topic);
         while (!cancellationToken.IsCancellationRequested)
         {
             var result = _consumer.Consume(TimeSpan.FromSeconds(1));
@@ -29,22 +29,8 @@ public class KafkaConsumer<TKey, TValue> : IDisposable
         }
     }
 
-    private void SetSubscribeOrAssign(string topic, int partition = -1, long offset = -1)
+    private void SetSubscribeOrAssign(string topic)
     {
-        if (partition >= 0)
-        {
-            if (offset >= 0)
-            {
-                _consumer.Assign(new TopicPartitionOffset(new TopicPartition(topic, partition), offset));
-            }
-            else
-            {
-                _consumer.Assign(new TopicPartition(topic, partition));
-            }
-        }
-        else
-        {
-            _consumer.Subscribe(topic);
-        }
+        _consumer.Subscribe(topic);
     }
 }

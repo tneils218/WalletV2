@@ -4,7 +4,7 @@
     {
         public string BootstrapServers { get; set; } = null!;
 
-        public string GroupId { get; set; } = null!;
+        public string ConsumerGroupId { get; set; } = null!;
 
         public string InputTopic { get; set; } = null!;
         public string OutputTopic { get; set; } = null!;
