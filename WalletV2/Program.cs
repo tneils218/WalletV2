@@ -18,15 +18,33 @@ var consumerConfig = new ConsumerConfig
     SessionTimeoutMs = 6000,
     QueuedMinMessages = 1000000
 };
+var consumerConfig2 = new ConsumerConfig
+{
+    GroupId = kafkaConfig.ConsumerGroupId2,
+    BootstrapServers = kafkaConfig.BootstrapServers,
+    SessionTimeoutMs = 6000,
+    QueuedMinMessages = 1000000
+};
 var producerConfig = new ProducerConfig
 {
     BootstrapServers = kafkaConfig.BootstrapServers,
 };
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+});
 var services = builder.Services;
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
-
+services.AddSignalR();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("MySql")));
 services.AddSingleton<IAccountService, AccountService>();
 services.AddSingleton<IAccountQueueService>(sp => new InMemoryAccountQueueService(128));
@@ -36,12 +54,15 @@ services.AddSingleton<IDbContextFactory<AppDbContext>, AppDbContextFactory>();
 builder.Services.AddHostedService<ConsumerBackgroundTask>();
 builder.Services.AddHostedService<ConsumerBackgroundTaskOutput>();
 
-
-
 builder.Services.AddSingleton(sp =>
 {
     var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build();
     return new KafkaConsumer<Ignore, string>(consumer);
+});
+builder.Services.AddSingleton(sp =>
+{
+    var consumer2 = new ConsumerBuilder<Ignore, string>(consumerConfig2).Build();
+    return new KafkaConsumer2<Ignore, string>(consumer2);
 });
 
 builder.Services.AddSingleton(sp =>
@@ -60,6 +81,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseFileServer();
 
-app.MapControllers();
+app.UseCors();
 
+app.MapControllers();
+app.MapHub<SignalRHub>("/hub/Wallet");
 app.Run();

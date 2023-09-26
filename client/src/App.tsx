@@ -1,26 +1,29 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios';
+import { useEffect } from 'react'
 
+import { HubConnectionBuilder } from '@microsoft/signalr';
 function App() {
-  const [data, setData] = useState(null);
-  const apiUrl = 'https://localhost:7016/api/Wallet';
+  const startConnection = async () => {
+    const connection = new HubConnectionBuilder().withUrl('https://localhost:7016/hub/Wallet').build()
+
+    connection.on('ReceiveData', (data) => {
+      // Handle the received data
+      console.log('Received data:', data)
+    })
+
+    try {
+      await connection.start();
+      console.log('Connection to hub established');
+    } catch (error) {
+      console.error('Error connecting to hub:', error);
+    }
+  }
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(apiUrl);
-        setData(response.data);
-      } catch (error) {
-          console.log(error)
-      }
-    };
-
-    fetchData();
-  }, []); //
-  return (
-    <>
-
-   </>
-  )
+    startConnection();
+  }, []);
+  return <>
+  
+  </>
 }
 
 export default App
