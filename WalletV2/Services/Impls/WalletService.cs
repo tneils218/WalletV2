@@ -6,6 +6,7 @@ using WalletV2.Models;
 using WalletV2.Services.DTOs;
 
 namespace WalletV2.Services.Impls;
+
 public class WalletService : IWalletService
 {
     private readonly IDbContextFactory<AppDbContext> _dbContextContextFactory;
@@ -17,13 +18,12 @@ public class WalletService : IWalletService
         _dbContextContextFactory = dbContextFactory;
         _logger = logger;
         _kafkaProduce = kafkaProduce;
-
     }
+
     public async Task<Wallet> CreateWallet(WalletDto walletDto)
     {
         using (var dbContext = _dbContextContextFactory.CreateDbContext())
         {
-
             var wallet = new Wallet(walletDto.AccountId);
 
             dbContext.WalletDb.Add(wallet);
@@ -46,6 +46,7 @@ public class WalletService : IWalletService
             return wallets;
         }
     }
+
     public async Task<string> TransferWallet(int sourceId, int walletId, decimal amount, int destinationId, int destinationWalletId, int actionTypeId)
     {
         using (var dbContext = _dbContextContextFactory.CreateDbContext())
@@ -81,8 +82,6 @@ public class WalletService : IWalletService
                 throw new InvalidOperationException("Insufficient balance in the sender's wallet.");
             }
 
-
-
             try
             {
                 sender.Amount -= amount + transferFee.Fee;
@@ -108,11 +107,8 @@ public class WalletService : IWalletService
         }
     }
 
-
-
     public async Task<Wallet> UpdateWallet(int walletId, decimal amount, int actionTypeId)
     {
-
         using (var dbContext = _dbContextContextFactory.CreateDbContext())
         {
             try
@@ -126,6 +122,7 @@ public class WalletService : IWalletService
                         case 1:
                             wallet.Amount += amount;
                             break;
+
                         default:
                             if (wallet.Amount > 0 && wallet.Amount >= amount)
                             {

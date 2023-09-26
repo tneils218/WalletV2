@@ -1,5 +1,7 @@
 ﻿using Confluent.Kafka;
 using Microsoft.AspNetCore.SignalR;
+using System.Text.Json;
+using WalletV2.Models;
 
 namespace WalletV2.BackgroundTasks
 {
@@ -27,7 +29,7 @@ namespace WalletV2.BackgroundTasks
         private async void ConsumerCallBack(ConsumeResult<Ignore, string> consumeResult)
         {
             var cancellationTokenSource = new CancellationTokenSource();
-            await _hubContext.Clients.All.SendAsync("ReceiveData", consumeResult.Message.Value, cancellationTokenSource.Token);
+            await _hubContext.Clients.All.SendAsync("ReceiveData", JsonSerializer.Deserialize<WalletHistory>(consumeResult.Message.Value), cancellationTokenSource.Token);
         }
     }
 }
