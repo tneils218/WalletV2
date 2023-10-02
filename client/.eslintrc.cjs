@@ -30,5 +30,8 @@ module.exports = {
         jsxSingleQuote: true,
       },
     ],
+    "no-var": "off", // Allow the usage of 'var'
+    "no-unused-vars": "off", // Allow unused variables
+    "prefer-const": "off",
   },
 };

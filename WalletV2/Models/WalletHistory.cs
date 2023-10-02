@@ -4,14 +4,17 @@ namespace WalletV2.Models;
 
 public class WalletHistory
 {
+    [JsonIgnore]
     public int Id { get; set; }
-
+    [JsonIgnore]
     public Wallet? Wallet { get; set; }
     public int WalletId { get; set; }
 
     public decimal Amount { get; set; }
+    [JsonIgnore]
 
     public AccountType? AccountType { get; set; } = null!;
+    [JsonIgnore]
 
     public ActionType? ActionType { get; set; } = null!;
 
@@ -48,6 +51,7 @@ public class WalletHistory
             Fee = fee,
             AccountTypeId = accountTypeId,
             ActionTypeId = actionTypeId,
+            SourceWalletId = walletId,
             Amount = amount,
             WalletId = walletId,
         };

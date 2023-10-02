@@ -92,7 +92,6 @@ public class WalletService : IWalletService
                 var message = new Message<Null, string> { Value = data };
                 _kafkaProduce.Produce(message, "wallet-output");
                 dbContext.WalletHistoryDb.Add(walletTransferHistory);
-
                 await dbContext.SaveChangesAsync();
                 await transaction.CommitAsync();
 
