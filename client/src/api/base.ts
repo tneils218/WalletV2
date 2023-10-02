@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig } from 'axios'
-
+const baseUrl = 'https://localhost:7016'
 const fetchApi = async (endPoint: string, method: string, params: string | null, data = null) => {
   let configs: AxiosRequestConfig = {
-    url: `api/v1/${endPoint}`,
+    url: `${baseUrl}/api/${endPoint}`,
     method: method,
     // headers: {
     //   Authorization: 'Bearer 2db3680f1c88c6d2e50c93033969a390f948de1d'
