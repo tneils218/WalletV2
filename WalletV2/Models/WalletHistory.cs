@@ -10,7 +10,6 @@ public class WalletHistory
     [JsonIgnore]
     public Wallet? Wallet { get; set; }
 
-    [JsonIgnore]
     public int WalletId { get; set; }
 
     public decimal Amount { get; set; }
@@ -87,4 +86,5 @@ public class WalletHistory
             WalletId = walletId,
         };
     }
+
 }

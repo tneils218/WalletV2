@@ -19,7 +19,9 @@ const fetchApi = async (endPoint: string, method: string, params: any | null, da
 export const transferWallet = async (params: any, urlConcat: string) => {
   return fetchApi(`Wallet`, 'PUT', null, params, urlConcat)
 }
-
+export const fetchWallet = async (params: any) => {
+  return fetchApi(`Wallet`, 'GET', null, params)
+}
 export const addWallet = async (params: any, urlConcat: string) => {
   return fetchApi(`Wallet`, 'POST', null, params, urlConcat)
 }

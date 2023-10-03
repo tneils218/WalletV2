@@ -8,13 +8,25 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import { Badge, Popover, Typography } from '@mui/material'
 import SignalRComponent from '~/SignalRComponent'
 import SnackbarNotification from './SnackbarNotification'
+import { fetchWallet } from '~/api/base'
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-
+  const [data, setData] = React.useState([])
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
   }
+
+  const fetchWalletApi = async () => {
+    let res = await fetchWallet('')
+    if (res.status === 200) {
+      setData(res.data)
+    }
+  }
+
+  React.useEffect(() => {
+    fetchWalletApi()
+  }, [])
 
   const handleClose = () => {
     setAnchorEl(null)
@@ -34,6 +46,26 @@ export default function Header() {
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
 
+  const sender: any = data.filter((el: any) => el.id === message?.walletId)[0]
+  const receiver: any = data.filter((el: any) => el.id === message?.destinationWalletId)[0]
+
+  const messageSnackbar = () => {
+    let msg = ''
+    switch (message?.actionTypeId) {
+      case 1:
+        msg = `${sender?.account?.fullName} đã nạp ${message.amount} vào tài khoản`
+        return msg
+      case 4:
+        msg = `${sender?.account?.fullName} đã rút ${message.amount} khỏi tài khoản`
+        return msg
+      case 2:
+        msg = `${sender?.account?.fullName} đã chuyển cho ${receiver?.account.fullName} ${message?.amount} với mức phí là ${message?.fee}`
+        return msg
+      default:
+        msg = 'lỗi'
+        return msg
+    }
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position='static'>
@@ -57,14 +89,12 @@ export default function Header() {
               vertical: 'top',
               horizontal: 'center'
             }}
-          >
-            {/* <Typography sx={{ p: 2 }}>{message != null ? message.amount : ''}</Typography> */}
-          </Popover>
+          ></Popover>
           <SnackbarNotification
             open={openSnackbar}
             setOpen={() => setOpenSnackbar(false)}
             code={200}
-            message={message !== null ? message.amount.toString() : ''}
+            message={message !== null ? messageSnackbar() : ''}
           />
         </Toolbar>
       </AppBar>

@@ -112,7 +112,10 @@ public class WalletService : IWalletService
         {
             try
             {
-                var wallet = await dbContext.WalletDb.FirstOrDefaultAsync(o => o.Id == walletQueueDto.WalletId);
+                var wallet = await dbContext.WalletDb.Include(o => o.Account).FirstOrDefaultAsync(o => o.Id == walletQueueDto.WalletId);
+
+                var transferFee = await dbContext.ActionDb
+                    .FirstOrDefaultAsync(o => o.AccountTypeId == wallet!.Account!.AccountTypeId && o.ActionTypeId == walletQueueDto.ActionId);
 
                 if (wallet != null)
                 {
@@ -130,6 +133,11 @@ public class WalletService : IWalletService
                             break;
                     }
 
+
+                    var walletTransferHistory = WalletHistory.CreateForAddMoney(walletQueueDto.WalletId, wallet.Id, transferFee.Fee, wallet!.Account!.AccountTypeId, walletQueueDto.ActionId, walletQueueDto.Amount);
+                    var data = JsonSerializer.Serialize(walletTransferHistory);
+                    var message = new Message<Null, string> { Value = data };
+                    _kafkaProduce.Produce(message, "wallet-output");
                     await dbContext.SaveChangesAsync();
 
                     return wallet;
