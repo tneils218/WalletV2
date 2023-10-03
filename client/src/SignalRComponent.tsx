@@ -12,7 +12,7 @@ interface StateData {
 }
 const SignalRComponent = () => {
   const [message, setMessage] = useState<StateData | null>(null)
-
+  const [openSnackbar, setOpenSnackbar] = useState(false)
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl('https://localhost:7016/hub/Wallet') // Replace with your SignalR hub URL
@@ -49,15 +49,17 @@ const SignalRComponent = () => {
       console.log('Received data from SignalR:', data)
       if (data) {
         setMessage(data)
+        setOpenSnackbar(true)
       }
     })
 
     return () => {
       connection.stop()
+      setOpenSnackbar(false)
     }
   }, [])
 
-  return message
+  return { message, openSnackbar, setOpenSnackbar }
 }
 
 export default SignalRComponent

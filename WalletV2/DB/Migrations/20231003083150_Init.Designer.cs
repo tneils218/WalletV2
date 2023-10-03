@@ -11,8 +11,8 @@ using WalletV2.DB;
 namespace WalletV2.DB.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230920082428_InitDb")]
-    partial class InitDb
+    [Migration("20231003083150_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

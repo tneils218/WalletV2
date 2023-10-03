@@ -78,7 +78,7 @@ public class WalletController : ControllerBase
 
         try
         {
-            await _walletQueueService.Queue(WalletQueueDto.CreateForAdd(
+            await _walletService.UpdateWallet(WalletQueueDto.CreateForAdd(
                         request.WalletId, request.Amount, request.ActionTypeId));
             return Ok();
         }
@@ -97,7 +97,7 @@ public class WalletController : ControllerBase
 
         try
         {
-            await _walletQueueService.Queue(WalletQueueDto.CreateForAdd(
+            await _walletService.UpdateWallet(WalletQueueDto.CreateForAdd(
                         request.WalletId, request.Amount, request.ActionTypeId));
             return Ok();
         }

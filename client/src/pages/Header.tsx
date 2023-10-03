@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -6,6 +7,7 @@ import IconButton from '@mui/material/IconButton'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import { Badge, Popover, Typography } from '@mui/material'
 import SignalRComponent from '~/SignalRComponent'
+import SnackbarNotification from './SnackbarNotification'
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -27,7 +29,7 @@ export default function Header() {
     }
     return `${count} notifications`
   }
-  const message = SignalRComponent()
+  const { message, openSnackbar, setOpenSnackbar } = SignalRComponent()
 
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
@@ -56,8 +58,14 @@ export default function Header() {
               horizontal: 'center'
             }}
           >
-            <Typography sx={{ p: 2 }}>{message != null ? message.amount : ''}</Typography>
+            {/* <Typography sx={{ p: 2 }}>{message != null ? message.amount : ''}</Typography> */}
           </Popover>
+          <SnackbarNotification
+            open={openSnackbar}
+            setOpen={() => setOpenSnackbar(false)}
+            code={200}
+            message={message !== null ? message.amount.toString() : ''}
+          />
         </Toolbar>
       </AppBar>
     </Box>

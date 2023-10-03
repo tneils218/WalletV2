@@ -1,25 +1,62 @@
 import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material'
 import { useFormik } from 'formik'
-import React from 'react'
-import { testApi } from '~/api/base'
+import React, { SyntheticEvent } from 'react'
+import { transferWallet, addWallet, withdrawWallet } from '~/api/base'
+import InputTextField from './InputTextField'
 
-const options = ['Option 1', 'Option 2']
+const options = [
+  { id: 1, label: 'Nạp tiền' },
+  { id: 2, label: 'Chuyển tiền' },
+  { id: 4, label: 'Rút tiền' }
+]
 
 const Home = () => {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState<string | null>(options[0])
-  const [inputValue, setInputValue] = React.useState('')
-  React.useEffect(() => {
-    testApi(null)
-  }, [])
+  // const [value, setValue] = React.useState<{ id: number; label: string } | null>(options[0])
+
   const handleClose = () => {
     setOpen(false)
   }
   const handleOpen = () => {
     setOpen(true)
   }
-  const handleSubmit = () => {
-    console.log('a')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleSubmit = (values: any) => {
+    switch (values.actionTypeId) {
+      case 1:
+        addWallet(
+          {
+            id: parseInt(values.id),
+            walletId: parseInt(values.walletId),
+            actionTypeId: parseInt(values.actionTypeId),
+            amount: parseInt(values.amount)
+          },
+          `/add`
+        )
+        break
+      case 2:
+        transferWallet(
+          {
+            receiverId: parseInt(values.receiverId),
+            receiverWalletId: parseInt(values.receiverWalletId),
+            actionTypeId: parseInt(values.actionTypeId),
+            amount: parseInt(values.amount)
+          },
+          `/${values.id}?WalletId=${values.walletId}`
+        )
+        break
+      default:
+        withdrawWallet(
+          {
+            id: parseInt(values.id),
+            walletId: parseInt(values.walletId),
+            actionTypeId: parseInt(values.actionTypeId),
+            amount: parseInt(values.amount)
+          },
+          `/add`
+        )
+        break
+    }
   }
 
   // const validationSchema = yup.object({
@@ -32,116 +69,110 @@ const Home = () => {
       walletId: null,
       receiverId: null,
       receiverWalletId: null,
-      actionTypeId: null,
+      actionTypeId: options[0].id,
       amount: null
     },
-    validationSchema: {},
+    validationSchema: null,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2))
+      handleSubmit(values)
     }
   })
+
   return (
     <>
+      {console.log(formik.values)}
       <Button variant='text' onClick={handleOpen}>
         Action Wallet
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Subscribe</DialogTitle>
+        <DialogTitle>Action money</DialogTitle>
         <DialogContent>
           <Autocomplete
-            value={value}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(event: any, newValue: string | null) => {
-              setValue(newValue)
+            value={(formik.values.actionTypeId ??= 1)}
+            onChange={(_: SyntheticEvent, newValue: number | null) => formik.setFieldValue('actionTypeId', newValue)}
+            options={options?.map((p) => p.id) ?? []}
+            getOptionLabel={(option: number) => {
+              return options.find((p) => p.id === option)?.label ?? ''
             }}
-            inputValue={inputValue}
-            onInputChange={(event, newInputValue) => {
-              setInputValue(newInputValue)
-            }}
-            id='controllable-states-demo'
-            options={options}
-            sx={{ width: 300, height: 150, mt: 1 }}
-            renderInput={(params) => <TextField {...params} label='Controllable' />}
+            sx={{ mt: 1, mb: 2 }}
+            renderInput={(params) => <TextField {...params} placeholder='Action money' fullWidth />}
           />
-          {formik.values.actionTypeId === 1 ? (
+          {formik.values.actionTypeId !== null ? (
             <>
-              <TextField
+              <InputTextField
                 sx={{ mb: 2 }}
                 fullWidth
                 id='id'
                 name='id'
+                formik={formik}
+                field='id'
                 label='id'
-                value={formik.values.id}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.id && Boolean(formik.errors.id)}
-                helperText={formik.touched.id && formik.errors.id}
+                placeholder='id'
               />
-              <TextField
+              <InputTextField
                 sx={{ mb: 2 }}
                 fullWidth
                 id='walletId'
+                formik={formik}
+                field='walletId'
                 name='walletId'
                 label='walletId'
-                value={formik.values.walletId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.walletId && Boolean(formik.errors.walletId)}
-                helperText={formik.touched.walletId && formik.errors.walletId}
+                placeholder='walletId'
               />
-              <TextField
-                sx={{ mb: 2 }}
-                fullWidth
-                id='receiverId'
-                name='receiverId'
-                label='receiverId'
-                value={formik.values.receiverId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.receiverId && Boolean(formik.errors.receiverId)}
-                helperText={formik.touched.receiverId && formik.errors.receiverId}
-              />
-              <TextField
-                sx={{ mb: 2 }}
-                fullWidth
-                id='receiverWalletId'
-                name='receiverWalletId'
-                label='receiverWalletId'
-                value={formik.values.receiverWalletId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.receiverWalletId && Boolean(formik.errors.receiverWalletId)}
-                helperText={formik.touched.receiverWalletId && formik.errors.receiverWalletId}
-              />
-              <TextField
-                sx={{ mb: 2 }}
-                fullWidth
-                id='actionTypeId'
-                name='actionTypeId'
-                label='actionTypeId'
-                value={formik.values.actionTypeId}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.actionTypeId && Boolean(formik.errors.actionTypeId)}
-                helperText={formik.touched.actionTypeId && formik.errors.actionTypeId}
-              />
-              <TextField
+              {formik.values.actionTypeId !== 1 && formik.values.actionTypeId !== 4 ? (
+                <>
+                  <InputTextField
+                    sx={{ mb: 2 }}
+                    fullWidth
+                    id='receiverId'
+                    formik={formik}
+                    field='receiverId'
+                    name='receiverId'
+                    label='receiverId'
+                    placeholder='receiverId'
+                  />
+                  <InputTextField
+                    sx={{ mb: 2 }}
+                    fullWidth
+                    id='receiverWalletId'
+                    field='receiverWalletId'
+                    name='receiverWalletId'
+                    label='receiverWalletId'
+                    formik={formik}
+                    placeholder='receiverWalletId'
+                  />
+                </>
+              ) : null}
+
+              <InputTextField
                 fullWidth
                 id='amount'
                 name='amount'
+                field='amount'
                 label='amount'
-                value={formik.values.amount}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.amount && Boolean(formik.errors.amount)}
-                helperText={formik.touched.amount && formik.errors.amount}
+                placeholder='amount'
+                formik={formik}
               />
             </>
           ) : null}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Subscribe</Button>
+          <Button
+            onClick={() => {
+              handleClose()
+              formik.resetForm()
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              formik.handleSubmit()
+              handleClose()
+            }}
+          >
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
     </>

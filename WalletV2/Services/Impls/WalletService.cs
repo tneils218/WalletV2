@@ -87,7 +87,7 @@ public class WalletService : IWalletService
                 sender.Amount -= amount + transferFee.Fee;
                 receiver.Amount += amount;
 
-                var walletTransferHistory = WalletHistory.CreateForSender(sender.Id, receiver.Id, transferFee.Fee, sender!.Account!.AccountTypeId, actionTypeId, amount);
+                var walletTransferHistory = WalletHistory.CreateForSender(sender.Id, destinationWalletId, transferFee.Fee, sender!.Account!.AccountTypeId, actionTypeId, amount);
                 var data = JsonSerializer.Serialize(walletTransferHistory);
                 var message = new Message<Null, string> { Value = data };
                 _kafkaProduce.Produce(message, "wallet-output");
@@ -106,26 +106,26 @@ public class WalletService : IWalletService
         }
     }
 
-    public async Task<Wallet> UpdateWallet(int walletId, decimal amount, int actionTypeId)
+    public async Task<Wallet> UpdateWallet(WalletQueueDto walletQueueDto)
     {
         using (var dbContext = _dbContextContextFactory.CreateDbContext())
         {
             try
             {
-                var wallet = await dbContext.WalletDb.FirstOrDefaultAsync(o => o.Id == walletId);
+                var wallet = await dbContext.WalletDb.FirstOrDefaultAsync(o => o.Id == walletQueueDto.WalletId);
 
                 if (wallet != null)
                 {
-                    switch (actionTypeId)
+                    switch (walletQueueDto.ActionId)
                     {
                         case 1:
-                            wallet.Amount += amount;
+                            wallet.Amount += walletQueueDto.Amount;
                             break;
 
                         default:
-                            if (wallet.Amount > 0 && wallet.Amount >= amount)
+                            if (wallet.Amount > 0 && wallet.Amount >= walletQueueDto.Amount)
                             {
-                                wallet.Amount -= amount;
+                                wallet.Amount -= walletQueueDto.Amount;
                             }
                             break;
                     }

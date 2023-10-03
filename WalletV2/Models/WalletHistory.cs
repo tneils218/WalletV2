@@ -6,16 +6,19 @@ public class WalletHistory
 {
     [JsonIgnore]
     public int Id { get; set; }
+
     [JsonIgnore]
     public Wallet? Wallet { get; set; }
+
+    [JsonIgnore]
     public int WalletId { get; set; }
 
     public decimal Amount { get; set; }
-    [JsonIgnore]
 
+    [JsonIgnore]
     public AccountType? AccountType { get; set; } = null!;
-    [JsonIgnore]
 
+    [JsonIgnore]
     public ActionType? ActionType { get; set; } = null!;
 
     public int AccountTypeId { get; set; }
@@ -33,6 +36,7 @@ public class WalletHistory
     {
         CreatedAt = DateTime.Now;
     }
+
     [JsonConstructor]
     public WalletHistory(int id, int walletId, decimal amount, int accountTypeId, int actionTypeId)
     {
@@ -43,6 +47,7 @@ public class WalletHistory
         ActionTypeId = actionTypeId;
         CreatedAt = DateTime.Now;
     }
+
     public static WalletHistory CreateForSender(int walletId, int receiverWalletId, decimal fee, int accountTypeId, int actionTypeId, decimal amount)
     {
         return new WalletHistory
