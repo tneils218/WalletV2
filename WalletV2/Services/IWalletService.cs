@@ -10,6 +10,6 @@ public interface IWalletService
 
     Task<List<Wallet>> GetAllWallet(string id);
 
-    Task<Wallet> UpdateWallet(int walletId, decimal amount, int actionTypeId);
+    Task<Wallet> UpdateWallet(WalletQueueDto walletQueueDto);
 
 }

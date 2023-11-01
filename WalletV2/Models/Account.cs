@@ -15,16 +15,16 @@ public class Account
     public bool Status { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    
+
     public AccountType? AccountType { get; set; }
-    
+
     public int AccountTypeId { get; set; }
-    
-    public DateTime? ActivatedAt { get; set; } 
+
+    public DateTime? ActivatedAt { get; set; }
 
     public Account()
     {
-        
+
     }
     public Account(string userName, string fullName, string email, DateTime dob, int typeId)
     {
@@ -35,7 +35,7 @@ public class Account
         AccountTypeId = typeId;
         Status = false;
     }
-    
+
     public void Active()
     {
         Status = true;
