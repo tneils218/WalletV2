@@ -25,7 +25,7 @@ public class WalletQueueHandler : BackgroundService
                 {
                     case 1:
                     case 4:
-                        //await _walletService.UpdateWallet(data.WalletId, data.Amount, data.ActionId);
+                        await _walletService.UpdateWallet(data.WalletId, data.Amount, data.ActionId);
                         break;
 
                     case 3:
