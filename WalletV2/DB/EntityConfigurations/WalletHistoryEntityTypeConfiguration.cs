@@ -4,7 +4,7 @@ using WalletV2.Models;
 
 namespace WalletV2.DB.EntityConfigurations;
 
-public class WalletHistoryEntityTypeConfiguration : IEntityTypeConfiguration<WalletHistory>
+public class WalletHistoryEntityTypeConfiguration: IEntityTypeConfiguration<WalletHistory>
 {
     public void Configure(EntityTypeBuilder<WalletHistory> builder)
     {
